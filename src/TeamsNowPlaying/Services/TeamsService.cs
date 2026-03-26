@@ -137,7 +137,7 @@ public sealed class TeamsService : IDisposable
                 },
                 ExpiryDateTime = new DateTimeTimeZone
                 {
-                    DateTime = DateTimeOffset.UtcNow.AddHours(1).ToString("yyyy-MM-ddTHH:mm:ss.fffffffK", System.Globalization.CultureInfo.InvariantCulture),
+                    DateTime = DateTimeOffset.UtcNow.AddMinutes(10).ToString("yyyy-MM-ddTHH:mm:ss.fffffffK", System.Globalization.CultureInfo.InvariantCulture),
                     TimeZone = "UTC"
                 }
             }
