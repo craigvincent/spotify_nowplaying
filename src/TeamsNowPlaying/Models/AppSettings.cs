@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace TeamsNowPlaying.Models;
 
 public sealed class SpotifySettings
@@ -20,3 +22,7 @@ public sealed class AppSettings
     public int PollIntervalSeconds { get; set; } = 10;
     public bool Enabled { get; set; } = true;
 }
+
+[JsonSerializable(typeof(AppSettings))]
+[JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+internal sealed partial class AppSettingsJsonContext : JsonSerializerContext;

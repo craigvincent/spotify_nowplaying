@@ -113,6 +113,8 @@ public partial class App : Application
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026",
+        Justification = "DataValidators is safe to access; we only remove the plugin at startup.")]
     private static void DisableAvaloniaDataAnnotationValidation()
     {
         var dataValidationPluginsToRemove =

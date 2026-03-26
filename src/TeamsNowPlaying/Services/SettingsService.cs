@@ -14,12 +14,6 @@ public sealed class SettingsService
     private static readonly string MsalCachePath =
         Path.Combine(SettingsDir, "msal_cache.bin");
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-
     public AppSettings Settings { get; private set; } = new();
 
     public static string GetMsalCachePath() => MsalCachePath;
@@ -35,7 +29,7 @@ public sealed class SettingsService
         try
         {
             var json = File.ReadAllText(SettingsPath);
-            Settings = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? new AppSettings();
+            Settings = JsonSerializer.Deserialize(json, AppSettingsJsonContext.Default.AppSettings) ?? new AppSettings();
         }
         catch
         {
@@ -46,7 +40,7 @@ public sealed class SettingsService
     public void Save()
     {
         Directory.CreateDirectory(SettingsDir);
-        var json = JsonSerializer.Serialize(Settings, JsonOptions);
+        var json = JsonSerializer.Serialize(Settings, AppSettingsJsonContext.Default.AppSettings);
         File.WriteAllText(SettingsPath, json);
     }
 }

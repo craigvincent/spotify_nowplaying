@@ -48,9 +48,6 @@ jobs:
           dotnet publish ${{ env.PROJECT }}
           --configuration Release
           --runtime ${{ matrix.rid }}
-          --self-contained true
-          -p:PublishSingleFile=true
-          -p:IncludeNativeLibrariesForSelfExtract=true
           -p:SourceRevisionId=${{ env.VERSION_SUFFIX }}
           --output ./publish
 
