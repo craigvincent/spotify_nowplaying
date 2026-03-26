@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  PROJECT: src/TeamsNowPlaying/TeamsNowPlaying.csproj
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+            artifact: TeamsNowPlaying-win-x64
+          - os: macos-latest
+            rid: osx-x64
+            artifact: TeamsNowPlaying-osx-x64
+          - os: macos-latest
+            rid: osx-arm64
+            artifact: TeamsNowPlaying-osx-arm64
+
+    name: Build (${{ matrix.rid }})
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Set version from commit hash
+        shell: bash
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "VERSION_SUFFIX=${SHORT_SHA}" >> "$GITHUB_ENV"
+          echo "Building version: 0.1.0+${SHORT_SHA}"
+
+      - name: Publish
+        run: >
+          dotnet publish ${{ env.PROJECT }}
+          --configuration Release
+          --runtime ${{ matrix.rid }}
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:SourceRevisionId=${{ env.VERSION_SUFFIX }}
+          --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ./publish/
+          retention-days: 30

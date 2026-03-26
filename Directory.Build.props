@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enable all .NET code-style and quality analyzers -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <!-- Treat all warnings as errors -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Implicit usings for cleaner files -->
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Version: SDK auto-appends +SourceRevisionId to InformationalVersion -->
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>
