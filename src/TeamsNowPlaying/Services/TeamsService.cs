@@ -202,9 +202,12 @@ public sealed class TeamsService : IDisposable
 
             SetupGraphClient(result.AccessToken);
         }
-        catch
+        catch (MsalUiRequiredException)
         {
-            // Token refresh failed; will fail on next Graph call
+            // Refresh token expired/revoked — user must re-authenticate
+            _graphClient = null;
+            _connectedUser = null;
+            _userId = null;
         }
     }
 
