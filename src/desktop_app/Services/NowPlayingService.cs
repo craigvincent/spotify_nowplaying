@@ -7,17 +7,19 @@ public sealed class NowPlayingService : INowPlayingService, IDisposable
     private readonly ISpotifyService _spotify;
     private readonly ITeamsService _teams;
     private readonly ISettingsService _settings;
+    private readonly TimeProvider _timeProvider;
 
     private CancellationTokenSource? _cts;
     private Task? _pollingTask;
     private TrackInfo? _lastTrack;
     private bool _lastWasCleared;
 
-    public NowPlayingService(ISpotifyService spotify, ITeamsService teams, ISettingsService settings)
+    public NowPlayingService(ISpotifyService spotify, ITeamsService teams, ISettingsService settings, TimeProvider? timeProvider = null)
     {
         _spotify = spotify;
         _teams = teams;
         _settings = settings;
+        _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
     public TrackInfo? CurrentTrack => _lastTrack;
@@ -65,7 +67,7 @@ public sealed class NowPlayingService : INowPlayingService, IDisposable
                 var interval = TimeSpan.FromSeconds(
                     Math.Max(5, _settings.Settings.PollIntervalSeconds));
 
-                await Task.Delay(interval, ct);
+                await Task.Delay(interval, _timeProvider, ct);
 
                 if (!_spotify.IsConnected || !_teams.IsConnected)
                     continue;

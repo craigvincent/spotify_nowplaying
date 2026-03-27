@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.Headless.XUnit" Version="11.3.12" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="*" />
     <PackageReference Include="NSubstitute" Version="5.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="*" />
     <PackageReference Include="xunit" Version="*" />

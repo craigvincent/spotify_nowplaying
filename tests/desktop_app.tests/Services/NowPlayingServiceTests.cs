@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
 using SpotifyNowPlaying.Models;
 using SpotifyNowPlaying.Services;
@@ -10,6 +11,7 @@ public class NowPlayingServiceTests : IDisposable
     private readonly ISpotifyService _spotify;
     private readonly ITeamsService _teams;
     private readonly ISettingsService _settings;
+    private readonly FakeTimeProvider _timeProvider;
     private readonly NowPlayingService _service;
 
     public NowPlayingServiceTests()
@@ -27,7 +29,8 @@ public class NowPlayingServiceTests : IDisposable
         _spotify.IsConnected.Returns(true);
         _teams.IsConnected.Returns(true);
 
-        _service = new NowPlayingService(_spotify, _teams, _settings);
+        _timeProvider = new FakeTimeProvider();
+        _service = new NowPlayingService(_spotify, _teams, _settings, _timeProvider);
     }
 
     [Fact]
@@ -80,8 +83,9 @@ public class NowPlayingServiceTests : IDisposable
 
         _service.Start();
 
-        // Wait for at least one poll cycle (5s interval + buffer)
-        await Task.Delay(TimeSpan.FromSeconds(7));
+        // Advance fake time past the poll interval
+        _timeProvider.Advance(TimeSpan.FromSeconds(6));
+        await Task.Yield();
 
         _service.Stop();
 
@@ -100,7 +104,8 @@ public class NowPlayingServiceTests : IDisposable
 
         _service.Start();
 
-        await Task.Delay(TimeSpan.FromSeconds(7));
+        _timeProvider.Advance(TimeSpan.FromSeconds(6));
+        await Task.Yield();
 
         _service.Stop();
 
@@ -116,7 +121,8 @@ public class NowPlayingServiceTests : IDisposable
 
         _service.Start();
 
-        await Task.Delay(TimeSpan.FromSeconds(7));
+        _timeProvider.Advance(TimeSpan.FromSeconds(6));
+        await Task.Yield();
 
         _service.Stop();
 
@@ -131,8 +137,11 @@ public class NowPlayingServiceTests : IDisposable
 
         _service.Start();
 
-        // Wait for two poll cycles
-        await Task.Delay(TimeSpan.FromSeconds(12));
+        // Advance past two poll cycles
+        _timeProvider.Advance(TimeSpan.FromSeconds(6));
+        await Task.Yield();
+        _timeProvider.Advance(TimeSpan.FromSeconds(6));
+        await Task.Yield();
 
         _service.Stop();
 
